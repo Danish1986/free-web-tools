@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Web Tools - Multi-Tool Website</title>
+    <meta name="description" content="Free online tools for developers: JSON Formatter, Text to HTML, Image Compressor, PDF Tools, Base64 encoder, JS Beautifier">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --info: #17a2b8;
+            --light: #ecf0f1;
+            --dark: #34495e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 20px 30px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .tools-nav {
+            background: var(--dark);
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            padding: 12px 20px;
+            background: transparent;
+            border: 2px solid var(--secondary);
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .main-content {
+            padding: 30px;
+            min-height: 600px;
+        }
+
+        .tool-section {
+            display: none;
+        }
+
+        .tool-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .section-header h2 {
+            color: var(--primary);
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .section-header p {
+            color: var(--dark);
+            font-size: 1.1rem;
+        }
+
+        .tool-container {
+            background: var(--light);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .control-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .control-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .control-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .control-item label {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.9rem;
+        }
+
+        select, input[type="number"], input[type="text"], input[type="password"] {
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-info {
+            background: var(--info);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .result-area {
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .preview-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .file-info {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 5px;
+            margin-top: 15px;
+            border: 1px solid #f5c6cb;
+            display: none;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 5px;
+            margin-top: 15px;
+            border: 1px solid #c3e6cb;
+            display: none;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .status-bar {
+            background: var(--dark);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .json-key { color: #9cdcfe; }
+        .json-string { color: #ce9178; }
+        .json-number { color: #b5cea8; }
+        .json-boolean { color: #569cd6; }
+        .json-null { color: #569cd6; }
+        .json-bracket { color: #ffd700; }
+
+        .json-output {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            min-height: 100px;
+        }
+
+        @media (max-width: 768px) {
+            .tools-nav {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav-btn {
+                width: 200px;
+            }
+            
+            .control-group {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">🛠️ Free Web Tools</div>
+            <div class="tagline">All-in-one toolkit for developers and users</div>
+        </header>
+
+        <nav class="tools-nav">
+            <button class="nav-btn active" onclick="showTool('json')">🔧 JSON Formatter</button>
+            <button class="nav-btn" onclick="showTool('text2html')">📝 Text to HTML</button>
+            <button class="nav-btn" onclick="showTool('image')">🖼️ Image Tools</button>
+            <button class="nav-btn" onclick="showTool('pdf')">📄 PDF Tools</button>
+            <button class="nav-btn" onclick="showTool('base64')">🔤 Base64 Tools</button>
+            <button class="nav-btn" onclick="showTool('jsbeautifier')">⚡ JS Beautifier</button>
+        </nav>
+
+        <div class="main-content">
+            <!-- JSON Formatter Tool -->
+            <div id="json-tool" class="tool-section active">
+                <div class="section-header">
+                    <h2>JSON Formatter & Validator</h2>
+                    <p>Format, validate, and beautify your JSON data</p>
+                </div>
+
+                <div class="tool-container">
+                    <div class="control-panel">
+                        <div class="control-group">
+                            <div class="control-item">
+                                <label>Indentation:</label>
+                                <select id="jsonIndent">
+                                    <option value="2">2 Spaces</option>
+                                    <option value="4" selected>4 Spaces</option>
+                                    <option value="1">Tab</option>
+                                </select>
+                            </div>
+                            <div class="control-item">
+                                <label>Sort Keys:</label>
+                                <select id="jsonSort">
+                                    <option value="false">No Sort</option>
+                                    <option value="true">Alphabetical</option>
+                                </select>
+                            </div>
+                            <div class="control-item">
+                                <label>Quote Style:</label>
+                                <select id="jsonQuotes">
+                                    <option value="double">Double Quotes</option>
+                                    <option value="single">Single Quotes</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <textarea id="jsonInput" placeholder='Paste your JSON here...'>{"name":"John","age":30,"city":"New York"}</textarea>
+
+                    <div class="button-group">
+                        <button class="btn btn-success" onclick="formatJSON()">✨ Format JSON</button>
+                        <button class="btn btn-danger" onclick="minifyJSON()">📏 Minify JSON</button>
+                        <button class="btn btn-warning" onclick="validateJSON()">✓ Validate JSON</button>
+                        <button class="btn btn-primary" onclick="loadSampleJSON()">📋 Sample Data</button>
+                        <button class="btn btn-info" onclick="clearJSON()">🗑️ Clear</button>
+                    </div>
+
+                    <div class="error-message" id="jsonError"></div>
+                    <div class="success-message" id="jsonSuccess"></div>
+
+                    <div class="result-area">
+                        <h3>Formatted Output:</h3>
+                        <pre id="jsonOutput" class="json-output"></pre>
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="copyJSON()">📄 Copy Output</button>
+                            <button class="btn btn-success" onclick="downloadJSON()">💾 Download JSON</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Text to HTML Tool -->
+            <div id="text2html-tool" class="tool-section">
+                <div class="section-header">
+                    <h2>Text to HTML Converter</h2>
+                    <p>Convert plain text to HTML with proper formatting</p>
+                </div>
+
+                <div class="tool-container">
+                    <textarea id="textInput" placeholder="Enter your text here...">Hello World!
+This is a sample text.
+
+Features:
+- Easy to use
+- Free
+- No registration required
+
+Visit us at: example.com</textarea>
+
+                    <div class="button-group">
+                        <button class="btn btn-success" onclick="convertToHTML()">🔄 Convert to HTML</button>
+                        <button class="btn btn-primary" onclick="loadSampleText()">📋 Sample Text</button>
+                        <button class="btn btn-info" onclick="clearText()">🗑️ Clear</button>
+                    </div>
+
+                    <div class="result-area">
+                        <h3>HTML Output:</h3>
+                        <textarea id="htmlOutput" readonly placeholder="HTML output will appear here..."></textarea>
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="copyHTML()">📄 Copy HTML</button>
+                            <button class="btn btn-success" onclick="downloadHTML()">💾 Download HTML</button>
+                        </div>
+
+                        <div style="margin-top: 20px;">
+                            <h3>Preview:</h3>
+                            <div id="htmlPreview" style="border: 1px solid #ddd; padding: 15px; background: white; border-radius: 5px; min-height: 100px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Image Tools -->
+            <div id="image-tool" class="tool-section">
+                <div class="section-header">
+                    <h2>Image Tools</h2>
+                    <p>Resize, compress, and convert images</p>
+                </div>
+
+                <div class="tool-container">
+                    <div class="control-panel">
+                        <div class="control-group">
+                            <div class="control-item">
+                                <label>Max Width:</label>
+                                <input type="number" id="imgWidth" value="800" placeholder="Width in pixels">
+                            </div>
+                            <div class="control-item">
+                                <label>Max Height:</label>
+                                <input type="number" id="imgHeight" value="600" placeholder="Height in pixels">
+                            </div>
+                            <div class="control-item">
+                                <label>Quality:</label>
+                                <select id="imgQuality">
+                                    <option value="0.9">High (90%)</option>
+                                    <option value="0.7" selected>Medium (70%)</option>
+                                    <option value="0.5">Low (50%)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="file-info">
+                        <input type="file" id="imageInput" accept="image/*">
+                        <p style="margin-top: 10px; color: #666;">Supported formats: JPG, PNG, GIF, WebP</p>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-success" onclick="compressImage()">🗜️ Compress Image</button>
+                        <button class="btn btn-primary" onclick="resizeImage()">📐 Resize Image</button>
+                        <button class="btn btn-info" onclick="convertImage()">🔄 Convert Format</button>
+                    </div>
+
+                    <div class="preview-container">
+                        <img id="imagePreview" class="preview-image hidden">
+                    </div>
+
+                    <div class="result-area">
+                        <h3>Image Information:</h3>
+                        <div id="imageInfo"></div>
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="downloadImage()">💾 Download Image</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other tools sections remain the same -->
+            <!-- PDF Tools -->
+            <div id="pdf-tool" class="tool-section">
+                <div class="section-header">
+                    <h2>PDF Tools</h2>
+                    <p>Basic PDF utilities (client-side simulation)</p>
+                </div>
+                <div class="tool-container">
+                    <div class="file-info">
+                        <input type="file" id="pdfInput" accept=".pdf">
+                        <p style="margin-top: 10px; color: #666;">Note: Advanced PDF processing requires server-side tools</p>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn btn-success" onclick="simulatePDFCompress()">🗜️ Compress PDF</button>
+                        <button class="btn btn-warning" onclick="simulatePDFUnlock()">🔓 Remove Password</button>
+                        <button class="btn btn-primary" onclick="showPDFInfo()">📊 PDF Info</button>
+                    </div>
+                    <div class="result-area">
+                        <h3>PDF Information:</h3>
+                        <div id="pdfInfo"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Base64 Tools -->
+            <div id="base64-tool" class="tool-section">
+                <div class="section-header">
+                    <h2>Base64 Tools</h2>
+                    <p>Encode and decode Base64 strings</p>
+                </div>
+                <div class="tool-container">
+                    <textarea id="base64Input" placeholder="Enter text or Base64 string here...">Hello Base64!</textarea>
+                    <div class="button-group">
+                        <button class="btn btn-success" onclick="encodeBase64()">Encode to Base64</button>
+                        <button class="btn btn-primary" onclick="decodeBase64()">Decode from Base64</button>
+                        <button class="btn btn-info" onclick="clearBase64()">🗑️ Clear</button>
+                    </div>
+                    <div class="result-area">
+                        <h3>Result:</h3>
+                        <textarea id="base64Output" readonly placeholder="Result will appear here..."></textarea>
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="copyBase64()">📄 Copy Result</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- JS Beautifier -->
+            <div id="jsbeautifier-tool" class="tool-section">
+                <div class="section-header">
+                    <h2>JavaScript Beautifier</h2>
+                    <p>Format and beautify JavaScript code</p>
+                </div>
+                <div class="tool-container">
+                    <textarea id="jsInput" placeholder="Paste your JavaScript code here...">function helloWorld(){console.log("Hello World");var x=10;if(x>5){console.log("x is greater than 5");}}</textarea>
+                    <div class="button-group">
+                        <button class="btn btn-success" onclick="beautifyJS()">✨ Beautify JS</button>
+                        <button class="btn btn-danger" onclick="minifyJS()">📏 Minify JS</button>
+                        <button class="btn btn-info" onclick="clearJS()">🗑️ Clear</button>
+                    </div>
+                    <div class="result-area">
+                        <h3>Formatted JavaScript:</h3>
+                        <textarea id="jsOutput" readonly placeholder="Formatted code will appear here..."></textarea>
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="copyJS()">📄 Copy Code</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-bar">
+            <div id="statusInfo">Ready to use free web tools</div>
+            <div id="fileInfo">All processing happens in your browser</div>
+        </div>
+    </div>
+
+    <script>
+        // Tool Navigation
+        function showTool(toolName) {
+            document.querySelectorAll('.tool-section').forEach(tool => {
+                tool.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(toolName + '-tool').classList.add('active');
+            event.target.classList.add('active');
+            updateStatus('Switched to ' + getToolName(toolName));
+        }
+
+        function getToolName(toolId) {
+            const names = {
+                'json': 'JSON Formatter',
+                'text2html': 'Text to HTML Converter',
+                'image': 'Image Tools',
+                'pdf': 'PDF Tools',
+                'base64': 'Base64 Tools',
+                'jsbeautifier': 'JavaScript Beautifier'
+            };
+            return names[toolId] || 'Tool';
+        }
+
+        function updateStatus(message) {
+            document.getElementById('statusInfo').textContent = message;
+        }
+
+        // JSON Functions
+        function formatJSON() {
+            try {
+                const input = document.getElementById('jsonInput').value;
+                const indent = document.getElementById('jsonIndent').value;
+                const sortKeys = document.getElementById('jsonSort').value === 'true';
+                const quoteStyle = document.getElementById('jsonQuotes').value;
+                
+                if (!input.trim()) {
+                    showError('jsonError', 'Please enter JSON data');
+                    return;
+                }
+                
+                let parsed = JSON.parse(input);
+                
+                if (sortKeys) {
+                    parsed = sortObjectKeys(parsed);
+                }
+                
+                let formatted = JSON.stringify(parsed, null, indent === '1' ? '\t' : parseInt(indent));
+                
+                if (quoteStyle === 'single') {
+                    formatted = formatted.replace(/\"/g, "'");
+                }
+                
+                document.getElementById('jsonOutput').textContent = formatted;
+                showSuccess('jsonSuccess', 'JSON formatted successfully!');
+                hideError('jsonError');
+                updateStatus('JSON formatted successfully');
+                
+            } catch (error) {
+                showError('jsonError', 'Invalid JSON: ' + error.message);
+                hideSuccess('jsonSuccess');
+            }
+        }
+
+        function minifyJSON() {
+            try {
+                const input = document.getElementById('jsonInput').value;
+                const minified = JSON.stringify(JSON.parse(input));
+                document.getElementById('jsonOutput').textContent = minified;
+                showSuccess('jsonSuccess', 'JSON minified successfully!');
+                updateStatus('JSON minified');
+            } catch (error) {
+                showError('jsonError', 'Invalid JSON: ' + error.message);
+            }
+        }
+
+        function validateJSON() {
+            try {
+                const input = document.getElementById('jsonInput').value;
+                JSON.parse(input);
+                showSuccess('jsonSuccess', '✅ JSON is valid!');
+                updateStatus('JSON validation passed');
+            } catch (error) {
+                showError('jsonError', '❌ Invalid JSON: ' + error.message);
+            }
+        }
+
+        function loadSampleJSON() {
+            const sample = {
+                "users": [
+                    {
+                        "id": 1,
+                        "name": "John Doe",
+                        "email": "john@example.com",
+                        "active": true,
+                        "profile": {
+                            "age": 30,
+                            "city": "New York"
+                        }
+                    }
+                ],
+                "total": 1,
+                "success": true
+            };
+            document.getElementById('jsonInput').value = JSON.stringify(sample, null, 2);
+            formatJSON();
+        }
+
+        function copyJSON() {
+            const output = document.getElementById('jsonOutput').textContent;
+            navigator.clipboard.writeText(output);
+            showSuccess('jsonSuccess', 'JSON copied to clipboard!');
+        }
+
+        function downloadJSON() {
+            const json = document.getElementById('jsonOutput').textContent;
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'formatted.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Text to HTML Functions
+        function convertToHTML() {
+            const text = document.getElementById('textInput').value;
+            
+            let html = text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/\n/g, '<br>')
+                .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
+                .replace(/  /g, '&nbsp;&nbsp;')
+                .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank">$1</a>');
+            
+            document.getElementById('htmlOutput').value = html;
+            document.getElementById('htmlPreview').innerHTML = html;
+            updateStatus('Text converted to HTML');
+        }
+
+        function loadSampleText() {
+            const sample = `Welcome to Free Web Tools!
+
+This is a sample text that will be converted to HTML.
+
+Features:
+- Easy to use
+- Completely free
+- No registration required
+
+Visit our website: https://example.com`;
+            document.getElementById('textInput').value = sample;
+            convertToHTML();
+        }
+
+        function copyHTML() {
+            navigator.clipboard.writeText(document.getElementById('htmlOutput').value);
+            alert('HTML copied to clipboard!');
+        }
+
+        // Image Tools Functions
+        function compressImage() {
+            const fileInput = document.getElementById('imageInput');
+            if (!fileInput.files[0]) {
+                alert('Please select an image file');
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            const quality = parseFloat(document.getElementById('imgQuality').value);
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+                    
+                    const compressedData = canvas.toDataURL('image/jpeg', quality);
+                    const preview = document.getElementById('imagePreview');
+                    preview.src = compressedData;
+                    preview.classList.remove('hidden');
+                    
+                    const originalSize = (file.size / 1024).toFixed(2);
+                    const compressedSize = (compressedData.length * 0.75 / 1024).toFixed(2);
+                    
+                    document.getElementById('imageInfo').innerHTML = `
+                        <p><strong>Original Size:</strong> ${originalSize} KB</p>
+                        <p><strong>Compressed Size:</strong> ~${compressedSize} KB</p>
+                        <p><strong>Reduction:</strong> ${((1 - compressedSize/originalSize) * 100).toFixed(1)}%</p>
+                        <p><strong>Quality:</strong> ${quality * 100}%</p>
+                    `;
+                    
+                    window.lastCompressedImage = compressedData;
+                    window.lastImageName = file.name.replace(/\.[^/.]+$/, "") + '_compressed.jpg';
+                    
+                    updateStatus('Image compressed successfully');
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function downloadImage() {
+            if (!window.lastCompressedImage) {
+                alert('Please compress an image first');
+                return;
+            }
+            
+            const link = document.createElement('a');
+            link.href = window.lastCompressedImage;
+            link.download = window.lastImageName;
+            link.click();
+            updateStatus('Image downloaded');
+        }
+
+        // Base64 Functions
+        function encodeBase64() {
+            const input = document.getElementById('base64Input').value;
+            const encoded = btoa(unescape(encodeURIComponent(input)));
+            document.getElementById('base64Output').value = encoded;
+            updateStatus('Text encoded to Base64');
+        }
+
+        function decodeBase64() {
+            const input = document.getElementById('base64Input').value;
+            try {
+                const decoded = decodeURIComponent(escape(atob(input)));
+                document.getElementById('base64Output').value = decoded;
+                updateStatus('Base64 decoded to text');
+            } catch (error) {
+                alert('Invalid Base64 string');
+            }
+        }
+
+        // JS Beautifier Functions
+        function beautifyJS() {
+            const code = document.getElementById('jsInput').value;
+            const indent = document.getElementById('jsonIndent').value;
+            const indentStr = indent === '1' ? '\t' : ' '.repeat(parseInt(indent));
+            
+            let formatted = code
+                .replace(/{/g, ' {\n')
+                .replace(/}/g, '\n}\n')
+                .replace(/;/g, ';\n')
+                .replace(/,/g, ', ');
+            
+            let level = 0;
+            formatted = formatted.split('\n').map(line => {
+                line = line.trim();
+                if (line.includes('}')) level--;
+                const indentedLine = indentStr.repeat(level) + line;
+                if (line.includes('{')) level++;
+                return indentedLine;
+            }).join('\n');
+            
+            document.getElementById('jsOutput').value = formatted;
+            updateStatus('JavaScript beautified');
+        }
+
+        function minifyJS() {
+            const code = document.getElementById('jsInput').value;
+            const minified = code
+                .replace(/\/\*[\s\S]*?\*\//g, '')
+                .replace(/\/\/.*/g, '')
+                .replace(/\s+/g, ' ')
+                .replace(/\s*([{}();,=])\s*/g, '$1')
+                .trim();
+            
+            document.getElementById('jsOutput').value = minified;
+            updateStatus('JavaScript minified');
+        }
+
+        // Utility Functions
+        function sortObjectKeys(obj) {
+            if (typeof obj !== 'object' || obj === null) return obj;
+            if (Array.isArray(obj)) return obj.map(sortObjectKeys);
+            
+            return Object.keys(obj).sort().reduce((sorted, key) => {
+                sorted[key] = sortObjectKeys(obj[key]);
+                return sorted;
+            }, {});
+        }
+
+        function showError(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.style.display = 'block';
+        }
+
+        function showSuccess(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.style.display = 'block';
+        }
+
+        function hideError(elementId) {
+            document.getElementById(elementId).style.display = 'none';
+        }
+
+        function hideSuccess(elementId) {
+            document.getElementById(elementId).style.display = 'none';
+        }
+
+        // Clear functions
+        function clearJSON() { 
+            document.getElementById('jsonInput').value = ''; 
+            document.getElementById('jsonOutput').textContent = ''; 
+            hideError('jsonError'); 
+            hideSuccess('jsonSuccess'); 
+        }
+        function clearText() { 
+            document.getElementById('textInput').value = ''; 
+            document.getElementById('htmlOutput').value = ''; 
+            document.getElementById('htmlPreview').innerHTML = ''; 
+        }
+        function clearBase64() { 
+            document.getElementById('base64Input').value = ''; 
+            document.getElementById('base64Output').value = ''; 
+        }
+        function clearJS() { 
+            document.getElementById('jsInput').value = ''; 
+            document.getElementById('jsOutput').value = ''; 
+        }
+
+        // Placeholder functions
+        function resizeImage() { alert('Image resize feature coming soon...'); }
+        function convertImage() { alert('Image format conversion coming soon...'); }
+        function simulatePDFCompress() { 
+            const fileInput = document.getElementById('pdfInput');
+            if (!fileInput.files[0]) {
+                alert('Please select a PDF file');
+                return;
+            }
+            const file = fileInput.files[0];
+            document.getElementById('pdfInfo').innerHTML = `
+                <p><strong>File:</strong> ${file.name}</p>
+                <p><strong>Original Size:</strong> ${(file.size / 1024).toFixed(2)} KB</p>
+                <p><strong>Simulated Compressed Size:</strong> ${(file.size * 0.7 / 1024).toFixed(2)} KB</p>
+                <p><em>Note: Actual PDF compression requires server-side processing</em></p>
+            `;
+        }
+        function simulatePDFUnlock() { 
+            alert('PDF password removal simulation - this would require server-side processing'); 
+        }
+        function showPDFInfo() { 
+            const fileInput = document.getElementById('pdfInput');
+            if (!fileInput.files[0]) {
+                alert('Please select a PDF file');
+                return;
+            }
+            const file = fileInput.files[0];
+            document.getElementById('pdfInfo').innerHTML = `
+                <p><strong>File Name:</strong> ${file.name}</p>
+                <p><strong>File Size:</strong> ${(file.size / 1024).toFixed(2)} KB</p>
+                <p><strong>File Type:</strong> ${file.type}</p>
+            `;
+        }
+        function copyBase64() { 
+            navigator.clipboard.writeText(document.getElementById('base64Output').value); 
+            alert('Copied to clipboard!'); 
+        }
+        function copyJS() { 
+            navigator.clipboard.writeText(document.getElementById('jsOutput').value); 
+            alert('JavaScript copied to clipboard!'); 
+        }
+        function downloadHTML() { alert('HTML download feature coming soon...'); }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSampleJSON();
+            convertToHTML();
+            updateStatus('All tools ready to use');
+        });
+    </script>
+</body>
+</html>
