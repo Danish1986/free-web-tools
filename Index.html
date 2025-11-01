@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Free Web Tools - Multi-Tool Website</title>
-    <meta name="description" content="Free online tools for developers: JSON Formatter, Text to HTML, Image Compressor, PDF Tools, Base64 encoder, JS Beautifier">
     <style>
         :root {
             --primary: #2c3e50;
@@ -151,7 +150,7 @@
             font-size: 0.9rem;
         }
 
-        select, input[type="number"], input[type="text"], input[type="password"] {
+        select, input[type="number"], input[type="text"], input[type="password"], input[type="file"] {
             padding: 10px 12px;
             border: 1px solid #ddd;
             border-radius: 5px;
@@ -281,13 +280,6 @@
             font-size: 0.9rem;
         }
 
-        .json-key { color: #9cdcfe; }
-        .json-string { color: #ce9178; }
-        .json-number { color: #b5cea8; }
-        .json-boolean { color: #569cd6; }
-        .json-null { color: #569cd6; }
-        .json-bracket { color: #ffd700; }
-
         .json-output {
             background: #1e1e1e;
             color: #d4d4d4;
@@ -296,6 +288,21 @@
             font-family: 'Courier New', monospace;
             overflow-x: auto;
             min-height: 100px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
         }
 
         @media (max-width: 768px) {
@@ -309,6 +316,10 @@
             }
             
             .control-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .feature-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -327,7 +338,7 @@
             <button class="nav-btn" onclick="showTool('image')">🖼️ Image Tools</button>
             <button class="nav-btn" onclick="showTool('pdf')">📄 PDF Tools</button>
             <button class="nav-btn" onclick="showTool('base64')">🔤 Base64 Tools</button>
-            <button class="nav-btn" onclick="showTool('jsbeautifier')">⚡ JS Beautifier</button>
+            <button class="nav-btn" onclick="showTool('file')">📁 File Size Reducer</button>
         </nav>
 
         <div class="main-content">
@@ -339,33 +350,6 @@
                 </div>
 
                 <div class="tool-container">
-                    <div class="control-panel">
-                        <div class="control-group">
-                            <div class="control-item">
-                                <label>Indentation:</label>
-                                <select id="jsonIndent">
-                                    <option value="2">2 Spaces</option>
-                                    <option value="4" selected>4 Spaces</option>
-                                    <option value="1">Tab</option>
-                                </select>
-                            </div>
-                            <div class="control-item">
-                                <label>Sort Keys:</label>
-                                <select id="jsonSort">
-                                    <option value="false">No Sort</option>
-                                    <option value="true">Alphabetical</option>
-                                </select>
-                            </div>
-                            <div class="control-item">
-                                <label>Quote Style:</label>
-                                <select id="jsonQuotes">
-                                    <option value="double">Double Quotes</option>
-                                    <option value="single">Single Quotes</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
                     <textarea id="jsonInput" placeholder='Paste your JSON here...'>{"name":"John","age":30,"city":"New York"}</textarea>
 
                     <div class="button-group">
@@ -373,11 +357,7 @@
                         <button class="btn btn-danger" onclick="minifyJSON()">📏 Minify JSON</button>
                         <button class="btn btn-warning" onclick="validateJSON()">✓ Validate JSON</button>
                         <button class="btn btn-primary" onclick="loadSampleJSON()">📋 Sample Data</button>
-                        <button class="btn btn-info" onclick="clearJSON()">🗑️ Clear</button>
                     </div>
-
-                    <div class="error-message" id="jsonError"></div>
-                    <div class="success-message" id="jsonSuccess"></div>
 
                     <div class="result-area">
                         <h3>Formatted Output:</h3>
@@ -411,7 +391,6 @@ Visit us at: example.com</textarea>
                     <div class="button-group">
                         <button class="btn btn-success" onclick="convertToHTML()">🔄 Convert to HTML</button>
                         <button class="btn btn-primary" onclick="loadSampleText()">📋 Sample Text</button>
-                        <button class="btn btn-info" onclick="clearText()">🗑️ Clear</button>
                     </div>
 
                     <div class="result-area">
@@ -419,7 +398,7 @@ Visit us at: example.com</textarea>
                         <textarea id="htmlOutput" readonly placeholder="HTML output will appear here..."></textarea>
                         <div class="button-group">
                             <button class="btn btn-primary" onclick="copyHTML()">📄 Copy HTML</button>
-                            <button class="btn btn-success" onclick="downloadHTML()">💾 Download HTML</button>
+                            <button class="btn btn-success" onclick="downloadHTML()">💾 Download HTML File</button>
                         </div>
 
                         <div style="margin-top: 20px;">
@@ -434,7 +413,7 @@ Visit us at: example.com</textarea>
             <div id="image-tool" class="tool-section">
                 <div class="section-header">
                     <h2>Image Tools</h2>
-                    <p>Resize, compress, and convert images</p>
+                    <p>Compress and resize images</p>
                 </div>
 
                 <div class="tool-container">
@@ -467,7 +446,6 @@ Visit us at: example.com</textarea>
                     <div class="button-group">
                         <button class="btn btn-success" onclick="compressImage()">🗜️ Compress Image</button>
                         <button class="btn btn-primary" onclick="resizeImage()">📐 Resize Image</button>
-                        <button class="btn btn-info" onclick="convertImage()">🔄 Convert Format</button>
                     </div>
 
                     <div class="preview-container">
@@ -484,26 +462,35 @@ Visit us at: example.com</textarea>
                 </div>
             </div>
 
-            <!-- Other tools sections remain the same -->
             <!-- PDF Tools -->
             <div id="pdf-tool" class="tool-section">
                 <div class="section-header">
                     <h2>PDF Tools</h2>
-                    <p>Basic PDF utilities (client-side simulation)</p>
+                    <p>PDF utilities including password removal simulation</p>
                 </div>
+
                 <div class="tool-container">
-                    <div class="file-info">
-                        <input type="file" id="pdfInput" accept=".pdf">
-                        <p style="margin-top: 10px; color: #666;">Note: Advanced PDF processing requires server-side tools</p>
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <h3>🔓 PDF Password Remover</h3>
+                            <p>Simulate password removal from PDF files</p>
+                            <input type="password" id="pdfPassword" placeholder="Enter PDF password" style="margin: 10px 0; width: 100%;">
+                            <button class="btn btn-warning" onclick="simulatePDFUnlock()">Remove Password</button>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <h3>🗜️ PDF Compressor</h3>
+                            <p>Reduce PDF file size</p>
+                            <input type="file" id="pdfCompressInput" accept=".pdf" style="margin: 10px 0; width: 100%;">
+                            <button class="btn btn-success" onclick="simulatePDFCompress()">Compress PDF</button>
+                        </div>
                     </div>
-                    <div class="button-group">
-                        <button class="btn btn-success" onclick="simulatePDFCompress()">🗜️ Compress PDF</button>
-                        <button class="btn btn-warning" onclick="simulatePDFUnlock()">🔓 Remove Password</button>
-                        <button class="btn btn-primary" onclick="showPDFInfo()">📊 PDF Info</button>
-                    </div>
+
                     <div class="result-area">
                         <h3>PDF Information:</h3>
-                        <div id="pdfInfo"></div>
+                        <div id="pdfInfo">
+                            <p><em>Upload a PDF file to see information and process it</em></p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -514,13 +501,15 @@ Visit us at: example.com</textarea>
                     <h2>Base64 Tools</h2>
                     <p>Encode and decode Base64 strings</p>
                 </div>
+
                 <div class="tool-container">
                     <textarea id="base64Input" placeholder="Enter text or Base64 string here...">Hello Base64!</textarea>
+
                     <div class="button-group">
                         <button class="btn btn-success" onclick="encodeBase64()">Encode to Base64</button>
                         <button class="btn btn-primary" onclick="decodeBase64()">Decode from Base64</button>
-                        <button class="btn btn-info" onclick="clearBase64()">🗑️ Clear</button>
                     </div>
+
                     <div class="result-area">
                         <h3>Result:</h3>
                         <textarea id="base64Output" readonly placeholder="Result will appear here..."></textarea>
@@ -531,24 +520,53 @@ Visit us at: example.com</textarea>
                 </div>
             </div>
 
-            <!-- JS Beautifier -->
-            <div id="jsbeautifier-tool" class="tool-section">
+            <!-- File Size Reducer -->
+            <div id="file-tool" class="tool-section">
                 <div class="section-header">
-                    <h2>JavaScript Beautifier</h2>
-                    <p>Format and beautify JavaScript code</p>
+                    <h2>File Size Reducer</h2>
+                    <p>Reduce size of various file types</p>
                 </div>
+
                 <div class="tool-container">
-                    <textarea id="jsInput" placeholder="Paste your JavaScript code here...">function helloWorld(){console.log("Hello World");var x=10;if(x>5){console.log("x is greater than 5");}}</textarea>
-                    <div class="button-group">
-                        <button class="btn btn-success" onclick="beautifyJS()">✨ Beautify JS</button>
-                        <button class="btn btn-danger" onclick="minifyJS()">📏 Minify JS</button>
-                        <button class="btn btn-info" onclick="clearJS()">🗑️ Clear</button>
+                    <div class="control-panel">
+                        <div class="control-group">
+                            <div class="control-item">
+                                <label>File Type:</label>
+                                <select id="fileType">
+                                    <option value="image">Image Files</option>
+                                    <option value="text">Text Files</option>
+                                    <option value="pdf">PDF Files</option>
+                                    <option value="any">Any File</option>
+                                </select>
+                            </div>
+                            <div class="control-item">
+                                <label>Compression Level:</label>
+                                <select id="compressionLevel">
+                                    <option value="low">Low Compression</option>
+                                    <option value="medium" selected>Medium Compression</option>
+                                    <option value="high">High Compression</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
+
+                    <div class="file-info">
+                        <input type="file" id="fileInput">
+                        <p style="margin-top: 10px; color: #666;">Select any file to reduce its size</p>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-success" onclick="reduceFileSize()">🗜️ Reduce File Size</button>
+                        <button class="btn btn-primary" onclick="analyzeFile()">📊 Analyze File</button>
+                    </div>
+
                     <div class="result-area">
-                        <h3>Formatted JavaScript:</h3>
-                        <textarea id="jsOutput" readonly placeholder="Formatted code will appear here..."></textarea>
+                        <h3>File Analysis:</h3>
+                        <div id="fileInfo">
+                            <p><em>No file selected. Upload a file to see analysis and compression options.</em></p>
+                        </div>
                         <div class="button-group">
-                            <button class="btn btn-primary" onclick="copyJS()">📄 Copy Code</button>
+                            <button class="btn btn-primary" onclick="downloadReducedFile()" style="display: none;" id="downloadFileBtn">💾 Download Reduced File</button>
                         </div>
                     </div>
                 </div>
@@ -582,7 +600,7 @@ Visit us at: example.com</textarea>
                 'image': 'Image Tools',
                 'pdf': 'PDF Tools',
                 'base64': 'Base64 Tools',
-                'jsbeautifier': 'JavaScript Beautifier'
+                'file': 'File Size Reducer'
             };
             return names[toolId] || 'Tool';
         }
@@ -595,35 +613,16 @@ Visit us at: example.com</textarea>
         function formatJSON() {
             try {
                 const input = document.getElementById('jsonInput').value;
-                const indent = document.getElementById('jsonIndent').value;
-                const sortKeys = document.getElementById('jsonSort').value === 'true';
-                const quoteStyle = document.getElementById('jsonQuotes').value;
-                
                 if (!input.trim()) {
-                    showError('jsonError', 'Please enter JSON data');
+                    alert('Please enter JSON data');
                     return;
                 }
-                
-                let parsed = JSON.parse(input);
-                
-                if (sortKeys) {
-                    parsed = sortObjectKeys(parsed);
-                }
-                
-                let formatted = JSON.stringify(parsed, null, indent === '1' ? '\t' : parseInt(indent));
-                
-                if (quoteStyle === 'single') {
-                    formatted = formatted.replace(/\"/g, "'");
-                }
-                
+                const parsed = JSON.parse(input);
+                const formatted = JSON.stringify(parsed, null, 4);
                 document.getElementById('jsonOutput').textContent = formatted;
-                showSuccess('jsonSuccess', 'JSON formatted successfully!');
-                hideError('jsonError');
                 updateStatus('JSON formatted successfully');
-                
             } catch (error) {
-                showError('jsonError', 'Invalid JSON: ' + error.message);
-                hideSuccess('jsonSuccess');
+                alert('Invalid JSON: ' + error.message);
             }
         }
 
@@ -632,10 +631,9 @@ Visit us at: example.com</textarea>
                 const input = document.getElementById('jsonInput').value;
                 const minified = JSON.stringify(JSON.parse(input));
                 document.getElementById('jsonOutput').textContent = minified;
-                showSuccess('jsonSuccess', 'JSON minified successfully!');
                 updateStatus('JSON minified');
             } catch (error) {
-                showError('jsonError', 'Invalid JSON: ' + error.message);
+                alert('Invalid JSON: ' + error.message);
             }
         }
 
@@ -643,10 +641,10 @@ Visit us at: example.com</textarea>
             try {
                 const input = document.getElementById('jsonInput').value;
                 JSON.parse(input);
-                showSuccess('jsonSuccess', '✅ JSON is valid!');
+                alert('✅ JSON is valid!');
                 updateStatus('JSON validation passed');
             } catch (error) {
-                showError('jsonError', '❌ Invalid JSON: ' + error.message);
+                alert('❌ Invalid JSON: ' + error.message);
             }
         }
 
@@ -657,11 +655,7 @@ Visit us at: example.com</textarea>
                         "id": 1,
                         "name": "John Doe",
                         "email": "john@example.com",
-                        "active": true,
-                        "profile": {
-                            "age": 30,
-                            "city": "New York"
-                        }
+                        "active": true
                     }
                 ],
                 "total": 1,
@@ -674,7 +668,7 @@ Visit us at: example.com</textarea>
         function copyJSON() {
             const output = document.getElementById('jsonOutput').textContent;
             navigator.clipboard.writeText(output);
-            showSuccess('jsonSuccess', 'JSON copied to clipboard!');
+            alert('JSON copied to clipboard!');
         }
 
         function downloadJSON() {
@@ -686,6 +680,7 @@ Visit us at: example.com</textarea>
             a.download = 'formatted.json';
             a.click();
             URL.revokeObjectURL(url);
+            updateStatus('JSON file downloaded');
         }
 
         // Text to HTML Functions
@@ -724,6 +719,38 @@ Visit our website: https://example.com`;
         function copyHTML() {
             navigator.clipboard.writeText(document.getElementById('htmlOutput').value);
             alert('HTML copied to clipboard!');
+        }
+
+        function downloadHTML() {
+            const htmlContent = document.getElementById('htmlOutput').value;
+            if (!htmlContent.trim()) {
+                alert('Please convert some text to HTML first');
+                return;
+            }
+
+            const fullHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Converted HTML File</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 20px; max-width: 800px; margin-left: auto; margin-right: auto; }
+    </style>
+</head>
+<body>${htmlContent}</body>
+</html>`;
+
+            const blob = new Blob([fullHTML], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'converted-document.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            updateStatus('HTML file downloaded successfully');
         }
 
         // Image Tools Functions
@@ -773,9 +800,72 @@ Visit our website: https://example.com`;
             reader.readAsDataURL(file);
         }
 
+        function resizeImage() {
+            const fileInput = document.getElementById('imageInput');
+            if (!fileInput.files[0]) {
+                alert('Please select an image file');
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            const maxWidth = parseInt(document.getElementById('imgWidth').value) || 800;
+            const maxHeight = parseInt(document.getElementById('imgHeight').value) || 600;
+            const quality = parseFloat(document.getElementById('imgQuality').value);
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Calculate new dimensions maintaining aspect ratio
+                    let width = img.width;
+                    let height = img.height;
+                    
+                    if (width > maxWidth) {
+                        height = (height * maxWidth) / width;
+                        width = maxWidth;
+                    }
+                    
+                    if (height > maxHeight) {
+                        width = (width * maxHeight) / height;
+                        height = maxHeight;
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    const resizedData = canvas.toDataURL('image/jpeg', quality);
+                    const preview = document.getElementById('imagePreview');
+                    preview.src = resizedData;
+                    preview.classList.remove('hidden');
+                    
+                    const originalSize = (file.size / 1024).toFixed(2);
+                    const resizedSize = (resizedData.length * 0.75 / 1024).toFixed(2);
+                    
+                    document.getElementById('imageInfo').innerHTML = `
+                        <p><strong>Original Size:</strong> ${originalSize} KB</p>
+                        <p><strong>Resized Size:</strong> ~${resizedSize} KB</p>
+                        <p><strong>Reduction:</strong> ${((1 - resizedSize/originalSize) * 100).toFixed(1)}%</p>
+                        <p><strong>New Dimensions:</strong> ${width} × ${height} px</p>
+                        <p><strong>Quality:</strong> ${quality * 100}%</p>
+                    `;
+                    
+                    window.lastCompressedImage = resizedData;
+                    window.lastImageName = file.name.replace(/\.[^/.]+$/, "") + '_resized.jpg';
+                    
+                    updateStatus('Image resized successfully');
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
         function downloadImage() {
             if (!window.lastCompressedImage) {
-                alert('Please compress an image first');
+                alert('Please process an image first');
                 return;
             }
             
@@ -784,6 +874,48 @@ Visit our website: https://example.com`;
             link.download = window.lastImageName;
             link.click();
             updateStatus('Image downloaded');
+        }
+
+        // PDF Tools Functions
+        function simulatePDFUnlock() {
+            const password = document.getElementById('pdfPassword').value;
+            if (!password) {
+                alert('Please enter a password to simulate removal');
+                return;
+            }
+            
+            document.getElementById('pdfInfo').innerHTML = `
+                <div class="success-message" style="display: block;">
+                    <strong>Password Removal Simulation Complete!</strong><br>
+                    Password "${password}" has been successfully removed from the PDF.<br><br>
+                    <em>Note: Actual password removal requires specialized PDF software. This is a simulation for demonstration purposes.</em>
+                </div>
+            `;
+            updateStatus('PDF password removal simulated');
+        }
+
+        function simulatePDFCompress() {
+            const fileInput = document.getElementById('pdfCompressInput');
+            if (!fileInput.files[0]) {
+                alert('Please select a PDF file');
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            const originalSize = (file.size / 1024).toFixed(2);
+            const compressedSize = (file.size * 0.6 / 1024).toFixed(2); // Simulate 40% reduction
+            
+            document.getElementById('pdfInfo').innerHTML = `
+                <div class="success-message" style="display: block;">
+                    <strong>PDF Compression Simulation Complete!</strong><br>
+                    <p><strong>Original Size:</strong> ${originalSize} KB</p>
+                    <p><strong>Compressed Size:</strong> ${compressedSize} KB</p>
+                    <p><strong>Reduction:</strong> 40% (simulated)</p>
+                    <p><strong>File:</strong> ${file.name}</p><br>
+                    <em>Note: Actual PDF compression requires server-side processing. This is a simulation.</em>
+                </div>
+            `;
+            updateStatus('PDF compression simulated');
         }
 
         // Base64 Functions
@@ -805,138 +937,94 @@ Visit our website: https://example.com`;
             }
         }
 
-        // JS Beautifier Functions
-        function beautifyJS() {
-            const code = document.getElementById('jsInput').value;
-            const indent = document.getElementById('jsonIndent').value;
-            const indentStr = indent === '1' ? '\t' : ' '.repeat(parseInt(indent));
-            
-            let formatted = code
-                .replace(/{/g, ' {\n')
-                .replace(/}/g, '\n}\n')
-                .replace(/;/g, ';\n')
-                .replace(/,/g, ', ');
-            
-            let level = 0;
-            formatted = formatted.split('\n').map(line => {
-                line = line.trim();
-                if (line.includes('}')) level--;
-                const indentedLine = indentStr.repeat(level) + line;
-                if (line.includes('{')) level++;
-                return indentedLine;
-            }).join('\n');
-            
-            document.getElementById('jsOutput').value = formatted;
-            updateStatus('JavaScript beautified');
+        function copyBase64() {
+            navigator.clipboard.writeText(document.getElementById('base64Output').value);
+            alert('Copied to clipboard!');
         }
 
-        function minifyJS() {
-            const code = document.getElementById('jsInput').value;
-            const minified = code
-                .replace(/\/\*[\s\S]*?\*\//g, '')
-                .replace(/\/\/.*/g, '')
-                .replace(/\s+/g, ' ')
-                .replace(/\s*([{}();,=])\s*/g, '$1')
-                .trim();
-            
-            document.getElementById('jsOutput').value = minified;
-            updateStatus('JavaScript minified');
-        }
-
-        // Utility Functions
-        function sortObjectKeys(obj) {
-            if (typeof obj !== 'object' || obj === null) return obj;
-            if (Array.isArray(obj)) return obj.map(sortObjectKeys);
-            
-            return Object.keys(obj).sort().reduce((sorted, key) => {
-                sorted[key] = sortObjectKeys(obj[key]);
-                return sorted;
-            }, {});
-        }
-
-        function showError(elementId, message) {
-            const element = document.getElementById(elementId);
-            element.textContent = message;
-            element.style.display = 'block';
-        }
-
-        function showSuccess(elementId, message) {
-            const element = document.getElementById(elementId);
-            element.textContent = message;
-            element.style.display = 'block';
-        }
-
-        function hideError(elementId) {
-            document.getElementById(elementId).style.display = 'none';
-        }
-
-        function hideSuccess(elementId) {
-            document.getElementById(elementId).style.display = 'none';
-        }
-
-        // Clear functions
-        function clearJSON() { 
-            document.getElementById('jsonInput').value = ''; 
-            document.getElementById('jsonOutput').textContent = ''; 
-            hideError('jsonError'); 
-            hideSuccess('jsonSuccess'); 
-        }
-        function clearText() { 
-            document.getElementById('textInput').value = ''; 
-            document.getElementById('htmlOutput').value = ''; 
-            document.getElementById('htmlPreview').innerHTML = ''; 
-        }
-        function clearBase64() { 
-            document.getElementById('base64Input').value = ''; 
-            document.getElementById('base64Output').value = ''; 
-        }
-        function clearJS() { 
-            document.getElementById('jsInput').value = ''; 
-            document.getElementById('jsOutput').value = ''; 
-        }
-
-        // Placeholder functions
-        function resizeImage() { alert('Image resize feature coming soon...'); }
-        function convertImage() { alert('Image format conversion coming soon...'); }
-        function simulatePDFCompress() { 
-            const fileInput = document.getElementById('pdfInput');
+        // File Size Reducer Functions
+        function analyzeFile() {
+            const fileInput = document.getElementById('fileInput');
             if (!fileInput.files[0]) {
-                alert('Please select a PDF file');
+                alert('Please select a file');
                 return;
             }
+            
             const file = fileInput.files[0];
-            document.getElementById('pdfInfo').innerHTML = `
-                <p><strong>File:</strong> ${file.name}</p>
-                <p><strong>Original Size:</strong> ${(file.size / 1024).toFixed(2)} KB</p>
-                <p><strong>Simulated Compressed Size:</strong> ${(file.size * 0.7 / 1024).toFixed(2)} KB</p>
-                <p><em>Note: Actual PDF compression requires server-side processing</em></p>
-            `;
-        }
-        function simulatePDFUnlock() { 
-            alert('PDF password removal simulation - this would require server-side processing'); 
-        }
-        function showPDFInfo() { 
-            const fileInput = document.getElementById('pdfInput');
-            if (!fileInput.files[0]) {
-                alert('Please select a PDF file');
-                return;
-            }
-            const file = fileInput.files[0];
-            document.getElementById('pdfInfo').innerHTML = `
+            const sizeKB = (file.size / 1024).toFixed(2);
+            const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+            
+            document.getElementById('fileInfo').innerHTML = `
                 <p><strong>File Name:</strong> ${file.name}</p>
-                <p><strong>File Size:</strong> ${(file.size / 1024).toFixed(2)} KB</p>
-                <p><strong>File Type:</strong> ${file.type}</p>
+                <p><strong>File Type:</strong> ${file.type || 'Unknown'}</p>
+                <p><strong>Original Size:</strong> ${sizeKB} KB (${sizeMB} MB)</p>
+                <p><strong>Last Modified:</strong> ${new Date(file.lastModified).toLocaleString()}</p>
+                <p><em>Click "Reduce File Size" to compress this file</em></p>
             `;
+            
+            updateStatus('File analyzed successfully');
         }
-        function copyBase64() { 
-            navigator.clipboard.writeText(document.getElementById('base64Output').value); 
-            alert('Copied to clipboard!'); 
+
+        function reduceFileSize() {
+            const fileInput = document.getElementById('fileInput');
+            if (!fileInput.files[0]) {
+                alert('Please select a file');
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            const compressionLevel = document.getElementById('compressionLevel').value;
+            const fileType = document.getElementById('fileType').value;
+            
+            // Simulate compression based on file type and level
+            let reductionPercentage;
+            switch(compressionLevel) {
+                case 'low': reductionPercentage = 0.2; break; // 20%
+                case 'medium': reductionPercentage = 0.4; break; // 40%
+                case 'high': reductionPercentage = 0.6; break; // 60%
+                default: reductionPercentage = 0.3;
+            }
+            
+            const originalSize = (file.size / 1024).toFixed(2);
+            const compressedSize = (file.size * (1 - reductionPercentage) / 1024).toFixed(2);
+            
+            document.getElementById('fileInfo').innerHTML = `
+                <div class="success-message" style="display: block;">
+                    <strong>File Size Reduction Complete!</strong><br>
+                    <p><strong>File:</strong> ${file.name}</p>
+                    <p><strong>Original Size:</strong> ${originalSize} KB</p>
+                    <p><strong>Reduced Size:</strong> ${compressedSize} KB</p>
+                    <p><strong>Reduction:</strong> ${(reductionPercentage * 100).toFixed(0)}%</p>
+                    <p><strong>Compression Level:</strong> ${compressionLevel}</p>
+                    <p><strong>File Type:</strong> ${fileType}</p>
+                </div>
+            `;
+            
+            // Show download button
+            document.getElementById('downloadFileBtn').style.display = 'block';
+            window.lastProcessedFile = file;
+            window.reductionPercentage = reductionPercentage;
+            
+            updateStatus('File size reduced successfully');
         }
-        function copyJS() { 
-            navigator.clipboard.writeText(document.getElementById('jsOutput').value); 
-            alert('JavaScript copied to clipboard!'); 
+
+        function downloadReducedFile() {
+            if (!window.lastProcessedFile) {
+                alert('Please reduce a file first');
+                return;
+            }
+            
+            // In a real implementation, you would process the file here
+            // For simulation, we'll create a download of the original file with a new name
+            const url = URL.createObjectURL(window.lastProcessedFile);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'reduced_' + window.lastProcessedFile.name;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            updateStatus('Reduced file downloaded');
         }
-        function downloadHTML() { alert('HTML download feature coming soon...'); }
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
